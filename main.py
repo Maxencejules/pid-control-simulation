@@ -10,7 +10,7 @@ def run_simulation():
     steps = int(sim_time / dt)
 
     # System + PID
-    system = ThermalSystem()  # make sure gain is 4.0 in system_model.py
+    system = ThermalSystem()  # uses gain=4.0, tau=12.0
     pid = PID(kp=3.0, ki=1.0, kd=0.2, dt=dt)
 
     # Target temp
@@ -28,25 +28,23 @@ def run_simulation():
     for i in range(steps):
         current_time = i * dt
 
-        # Compute PID output from current measurement
+        # PID control
         heater_power = pid.compute(setpoint=setpoint, measurement=measurement)
+        heater_power = max(0.0, min(1.0, heater_power))  # clamp 0–1
 
-        # Clamp power between 0 and 1 (like a real heater)
-        heater_power = max(0.0, min(1.0, heater_power))
-
-        # Update system with this heater power
+        # Update plant
         measurement = system.update(heater_power=heater_power, dt=dt)
 
-        # Store logs
+        # Log
         times.append(current_time)
         temps.append(measurement)
         outputs.append(heater_power)
         setpoints.append(setpoint)
 
-    # Plot results: temperature + heater power
+    # Plots
     plt.figure(figsize=(12, 10))
 
-    # Temperature subplot
+    # Temperature
     plt.subplot(2, 1, 1)
     plt.plot(times, temps, label="Measured Temperature")
     plt.plot(times, setpoints, "--", label="Setpoint")
@@ -56,7 +54,7 @@ def run_simulation():
     plt.legend()
     plt.grid(True)
 
-    # Heater power subplot
+    # Heater power
     plt.subplot(2, 1, 2)
     plt.plot(times, outputs, label="Heater Power (0–1)")
     plt.xlabel("Time (s)")
