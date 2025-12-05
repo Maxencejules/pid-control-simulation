@@ -7,8 +7,10 @@ def simulate_controller(controller_type: str, dt: float, sim_time: float):
     steps = int(sim_time / dt)
     setpoint = 50.0
 
-    # Independent copy of the plant for each controller
+    # Independent plant for each controller
     system = ThermalSystem()
+
+    # Controller selection
     if controller_type == "P":
         pid = PID(kp=2.0, ki=0.0, kd=0.0, dt=dt)
     elif controller_type == "PI":
@@ -39,22 +41,29 @@ def run_comparison():
     dt = 0.1
     sim_time = 120.0
 
+    # Run three independent controllers
     times_p, temps_p = simulate_controller("P", dt, sim_time)
     times_pi, temps_pi = simulate_controller("PI", dt, sim_time)
     times_pid, temps_pid = simulate_controller("PID", dt, sim_time)
 
-    plt.figure(figsize=(12, 6))
-    plt.plot(times_p, temps_p, label="P only")
-    plt.plot(times_pi, temps_pi, label="PI")
-    plt.plot(times_pid, temps_pid, label="PID (with anti-windup)")
-    plt.axhline(50.0, linestyle="--", color="black", label="Setpoint")
+    # Clean figure layout
+    fig, ax = plt.subplots(figsize=(12, 6))
 
-    plt.xlabel("Time (s)")
-    plt.ylabel("Temperature (°C)")
-    plt.title("Comparison of P, PI, and PID Control")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
+    ax.plot(times_p, temps_p, label="P only")
+    ax.plot(times_pi, temps_pi, label="PI")
+    ax.plot(times_pid, temps_pid, label="PID (with anti-windup)")
+    ax.axhline(50.0, linestyle="--", color="black", label="Setpoint")
+
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Temperature (°C)")
+    ax.set_title("Comparison of P, PI, and PID Control")
+    ax.legend()
+    ax.grid(True)
+
+    # Layout fixes
+    fig.tight_layout()
+    fig.subplots_adjust(top=0.9)
+
     plt.show()
 
 

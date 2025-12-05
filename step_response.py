@@ -38,27 +38,33 @@ def run_step_response():
         outputs.append(heater_power)
         setpoints.append(setpoint)
 
-    plt.figure(figsize=(12, 10))
+    # CLEAN subplot template (same as main.py version)
+    fig, axes = plt.subplots(2, 1, figsize=(12, 8))
 
-    plt.subplot(2, 1, 1)
-    plt.plot(times, temps, label="Measured Temperature")
-    plt.plot(times, setpoints, "--", label="Setpoint")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Temperature (°C)")
-    plt.title("PID Step Response: 30°C → 50°C → 40°C")
-    plt.legend()
-    plt.grid(True)
+    # Temperature subplot
+    ax1 = axes[0]
+    ax1.plot(times, temps, label="Measured Temperature")
+    ax1.plot(times, setpoints, "--", label="Setpoint")
+    ax1.set_xlabel("Time (s)")
+    ax1.set_ylabel("Temperature (°C)")
+    ax1.set_title("PID Step Response: 30°C → 50°C → 40°C")
+    ax1.legend()
+    ax1.grid(True)
 
-    plt.subplot(2, 1, 2)
-    plt.plot(times, outputs, label="Heater Power (0–1)")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Power")
-    plt.title("Heater Output Over Time")
-    plt.ylim(0, 1.05)
-    plt.legend()
-    plt.grid(True)
+    # Heater power subplot
+    ax2 = axes[1]
+    ax2.plot(times, outputs, label="Heater Power (0–1)")
+    ax2.set_xlabel("Time (s)")
+    ax2.set_ylabel("Power")
+    ax2.set_title("Heater Output Over Time")
+    ax2.set_ylim(0, 1.05)
+    ax2.legend()
+    ax2.grid(True)
 
-    plt.tight_layout()
+    # Layout fixes to prevent title jumping / overlap
+    fig.tight_layout()
+    fig.subplots_adjust(top=0.9, hspace=0.35)
+
     plt.show()
 
 

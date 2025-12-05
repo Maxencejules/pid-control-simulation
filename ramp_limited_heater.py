@@ -12,7 +12,7 @@ def run_ramp_limited_control():
     pid = PID(kp=3.0, ki=1.0, kd=0.2, dt=dt)
     setpoint = 50.0
 
-    max_delta = 0.05  # max change per step
+    max_delta = 0.05  # max allowed change per step (ramp limit)
     heater_power = 0.0
 
     times, temps, outputs = [], [], []
@@ -21,11 +21,11 @@ def run_ramp_limited_control():
     for i in range(steps):
         t = i * dt
 
+        # Ideal PID output
         desired = pid.compute(setpoint=setpoint, measurement=measurement)
-
         desired = max(0.0, min(1.0, desired))
 
-        # Ramp-rate limiting
+        # Apply ramp-rate limit
         delta = desired - heater_power
         if delta > max_delta:
             delta = max_delta
@@ -34,33 +34,41 @@ def run_ramp_limited_control():
 
         heater_power += delta
 
+        # Update system
         measurement = system.update(heater_power, dt)
 
+        # Log
         times.append(t)
         temps.append(measurement)
         outputs.append(heater_power)
 
-    plt.figure(figsize=(12, 10))
+    # --- Clean subplot layout ---
+    fig, axes = plt.subplots(2, 1, figsize=(12, 8))
 
-    plt.subplot(2, 1, 1)
-    plt.plot(times, temps, label="Measured Temperature")
-    plt.axhline(setpoint, linestyle="--", color="orange", label="Setpoint")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Temperature (°C)")
-    plt.title("PID Control with Ramp-Limited Heater Output")
-    plt.legend()
-    plt.grid(True)
+    # Temperature subplot
+    ax1 = axes[0]
+    ax1.plot(times, temps, label="Measured Temperature")
+    ax1.axhline(setpoint, linestyle="--", color="orange", label="Setpoint")
+    ax1.set_xlabel("Time (s)")
+    ax1.set_ylabel("Temperature (°C)")
+    ax1.set_title("PID Control with Ramp-Limited Heater Output")
+    ax1.legend()
+    ax1.grid(True)
 
-    plt.subplot(2, 1, 2)
-    plt.plot(times, outputs, label="Heater Power (ramp-limited)")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Power")
-    plt.title("Heater Output With Ramp Rate Limiting")
-    plt.ylim(0, 1.05)
-    plt.legend()
-    plt.grid(True)
+    # Heater power subplot
+    ax2 = axes[1]
+    ax2.plot(times, outputs, label="Heater Power (Ramp-Limited)")
+    ax2.set_xlabel("Time (s)")
+    ax2.set_ylabel("Power")
+    ax2.set_title("Heater Output With Ramp Rate Limiting")
+    ax2.set_ylim(0, 1.05)
+    ax2.legend()
+    ax2.grid(True)
 
-    plt.tight_layout()
+    # Layout fix
+    fig.tight_layout()
+    fig.subplots_adjust(top=0.9, hspace=0.35)
+
     plt.show()
 
 
