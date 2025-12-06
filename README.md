@@ -132,6 +132,5 @@ pid-control-simulation/
 ├── ramp_limited_heater.py
 ├── ziegler_nichols_demo.py
 ├── interactive_pid_tuning.py
-├── realtime_animation.py
-└── generate_readme.py
+└── realtime_animation.py
 
