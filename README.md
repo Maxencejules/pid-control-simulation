@@ -124,6 +124,9 @@ pid-control-simulation/
 ├── utils/
 │   ├── __init__.py
 │   └── filtering.py
+├── tests/
+│   ├── __init__.py
+│   └── test_pid.py
 ├── images/                    # auto generated plots
 ├── main.py
 ├── step_response.py
@@ -133,4 +136,23 @@ pid-control-simulation/
 ├── ziegler_nichols_demo.py
 ├── interactive_pid_tuning.py
 └── realtime_animation.py
+```
+## Running Tests
+
+```bash
+pytest
+```
+## Relevance to Embedded / Firmware Roles
+
+This project demonstrates:
+
+- Closed-loop control of a physical system (thermal plant) using PID
+- Handling actuator saturation and anti-windup logic
+- Working with noisy sensor data and digital filtering
+- Designing and comparing different controller modes (P / PI / PID)
+- Building clear visualizations and tools to analyze controller stability
+
+This maps directly to embedded firmware work on real hardware:
+temperature controllers, power modules, optical / RF modules, and other
+DSP-assisted systems.
 
