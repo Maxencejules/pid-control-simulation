@@ -21,3 +21,9 @@ Thumbs.db
 
 # Temp files
 *.tmp
+
+# Regenerable traces and local plotting/test caches
+build/
+.pytest_cache/
+results/*.csv
+images/*.svg

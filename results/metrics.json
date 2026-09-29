@@ -1,0 +1,136 @@
+{
+  "configuration": {
+    "dt_s": 0.1,
+    "ambient_c": 20,
+    "tau_s": 12,
+    "gain_c_per_second_per_unit_power": 4,
+    "maximum_equilibrium_c": 68,
+    "pid_gains": {
+      "kp": 0.18,
+      "ki": 0.015,
+      "kd": 0.03
+    },
+    "noise_seed": 7,
+    "noise_std_c": {
+      "default": 0.0,
+      "unfiltered": 0.5,
+      "filtered": 0.5
+    },
+    "nominal_duration_s": 180,
+    "recovery_duration_s": 240,
+    "sampling_duration_s": 12,
+    "recovery_release_time_s": 60,
+    "moving_average_samples": 10,
+    "ramp_limit_power_units_per_second": 0.1,
+    "response_metrics_use_true_temperature": true,
+    "settling_band": "2% of initial step amplitude, minimum 0.1 C",
+    "steady_state_window_s": 10
+  },
+  "metrics": {
+    "P": {
+      "overshoot_c": 0.0,
+      "overshoot_percent": 0.0,
+      "settling_time_s": null,
+      "settling_band_c": 0.6,
+      "steady_state_error_c": 3.1120331950207856
+    },
+    "PI": {
+      "overshoot_c": 0.0,
+      "overshoot_percent": 0.0,
+      "settling_time_s": 28.8,
+      "settling_band_c": 0.6,
+      "steady_state_error_c": 3.3564934298624394e-06
+    },
+    "PID": {
+      "overshoot_c": 0.0,
+      "overshoot_percent": 0.0,
+      "settling_time_s": 28.1,
+      "settling_band_c": 0.6,
+      "steady_state_error_c": 2.608910534718234e-06
+    },
+    "ramp_limited": {
+      "overshoot_c": 0.0,
+      "overshoot_percent": 0.0,
+      "settling_time_s": 34.6,
+      "settling_band_c": 0.6,
+      "steady_state_error_c": 4.485161092304679e-06
+    },
+    "unfiltered": {
+      "overshoot_c": 0.30625421961691757,
+      "overshoot_percent": 1.0208473987230586,
+      "settling_time_s": 42.400000000000006,
+      "settling_band_c": 0.6,
+      "steady_state_error_c": 0.07853020678555822,
+      "measurement_error_rms_last_30s_c": 0.5271231737740939,
+      "feedback_error_rms_last_30s_c": 0.5271231737740939,
+      "heater_total_variation_last_30s": 120.01831257477134
+    },
+    "filtered": {
+      "overshoot_c": 0.3048999562853467,
+      "overshoot_percent": 1.0163331876178223,
+      "settling_time_s": 27.700000000000003,
+      "settling_band_c": 0.6,
+      "steady_state_error_c": -0.03081828289022326,
+      "measurement_error_rms_last_30s_c": 0.5271231737740939,
+      "feedback_error_rms_last_30s_c": 0.21552569549852724,
+      "heater_total_variation_last_30s": 9.844915359615834
+    },
+    "anti_windup": {
+      "overshoot_c": 1.729304857446614,
+      "overshoot_percent": 6.246747595098424,
+      "settling_time_s": 29.200000000000003,
+      "settling_band_c": 0.5536656735750077,
+      "steady_state_error_c": 2.6322808608369996e-06,
+      "peak_integral_error_seconds": 27.777757791164632
+    },
+    "without_anti_windup": {
+      "overshoot_c": 0.0,
+      "overshoot_percent": 0.0,
+      "settling_time_s": 123.0,
+      "settling_band_c": 0.5536656735750077,
+      "steady_state_error_c": -0.007092775979295141,
+      "peak_integral_error_seconds": 2492.199404145006
+    },
+    "step_response": [
+      {
+        "start_s": 0,
+        "target_c": 30,
+        "overshoot_c": 0.0,
+        "overshoot_percent": 0.0,
+        "settling_time_s": 10.3,
+        "settling_band_c": 0.2,
+        "steady_state_error_c": 0.00445067087915163
+      },
+      {
+        "start_s": 60,
+        "target_c": 50,
+        "overshoot_c": 0.0,
+        "overshoot_percent": 0.0,
+        "settling_time_s": 25.30000000000001,
+        "settling_band_c": 0.4000562167988481,
+        "steady_state_error_c": 0.0338030442609778
+      },
+      {
+        "start_s": 120,
+        "target_c": 40,
+        "overshoot_c": 0.0,
+        "overshoot_percent": 0.0,
+        "settling_time_s": 18.599999999999994,
+        "settling_band_c": 0.19957303089999912,
+        "steady_state_error_c": -0.009530139058654186
+      }
+    ]
+  },
+  "sampling_analysis": {
+    "continuous_p_pole_per_second": {
+      "0.1": -0.48333333333333334,
+      "5.0": -20.083333333333332
+    },
+    "euler_p_pole": {
+      "0.1": 0.9516666666666667,
+      "5.0": -1.0083333333333333
+    },
+    "euler_linear_stability_kp_upper_bound": 4.979166666666667,
+    "continuous_ultimate_gain": null
+  }
+}

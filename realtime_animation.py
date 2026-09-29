@@ -1,78 +1,44 @@
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+"""Replay a precomputed deterministic trace; redraws never advance the plant."""
+from demo import plotting
 from controller.pid import PID
+from experiments import DT, GAINS, SEED
+from simulation import simulate
 from system.system_model import ThermalSystem
 
 
 def main():
-    dt = 0.1
-    setpoint = 50.0
+    plt = plotting(show=True)
+    from matplotlib.animation import FuncAnimation
+    trace = simulate(PID(*GAINS, DT), 60, 50, plant=ThermalSystem(seed=SEED))
+    fig, (temperature_axis, power_axis) = plt.subplots(2, 1, figsize=(10, 6), layout="constrained")
+    temperature_line, = temperature_axis.plot([], [], label="True temperature")
+    sensor_line, = temperature_axis.plot([], [], alpha=.4, label="Sensor measurement")
+    power_line, = power_axis.plot([], [], drawstyle="steps-pre", label="Applied power")
+    temperature_axis.axhline(50, color="black", linestyle="--", label="Setpoint")
+    temperature_axis.set(xlim=(0, 60), ylim=(19, 53), ylabel="Temperature (°C)",
+                         title="Deterministic 10Hz simulation replay")
+    power_axis.set(xlim=(0, 60), ylim=(-.05, 1.05), ylabel="Power (0–1)", xlabel="Time (s)")
+    for axis in (temperature_axis, power_axis):
+        axis.grid(True, alpha=.25)
+        axis.legend()
 
-    system = ThermalSystem()
-    pid = PID(kp=3.0, ki=1.0, kd=0.2, dt=dt)
-
-    measurement = system.temperature
-    heater_power = 0.0
-
-    # Logging
-    times = []
-    temps = []
-    powers = []
-
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
-    fig.subplots_adjust(hspace=0.35)
-
-    # Temperature graph
-    temp_line, = ax1.plot([], [], label="Temperature")
-    ax1.axhline(setpoint, linestyle="--", color="orange", label="Setpoint")
-    ax1.set_xlim(0, 60)
-    ax1.set_ylim(20, 60)
-    ax1.set_title("Real-Time PID Temperature Control")
-    ax1.set_xlabel("Time (s)")
-    ax1.set_ylabel("Temperature (°C)")
-    ax1.legend()
-    ax1.grid(True)
-
-    # Power graph
-    power_line, = ax2.plot([], [], label="Heater Power (0–1)")
-    ax2.set_xlim(0, 60)
-    ax2.set_ylim(0, 1.05)
-    ax2.set_title("Heater Power Over Time")
-    ax2.set_xlabel("Time (s)")
-    ax2.set_ylabel("Power")
-    ax2.legend()
-    ax2.grid(True)
+    def init():
+        temperature_line.set_data([], [])
+        sensor_line.set_data([], [])
+        power_line.set_data([], [])
+        return temperature_line, sensor_line, power_line
 
     def update(frame):
-        nonlocal measurement, heater_power
+        end = frame + 1
+        temperature_line.set_data(trace.times[:end], trace.temperatures[:end])
+        sensor_line.set_data(trace.times[:end], trace.measurements[:end])
+        power_line.set_data(trace.times[:end], trace.powers[:end])
+        return temperature_line, sensor_line, power_line
 
-        t = frame * dt
-
-        # PID control
-        u = pid.compute(setpoint=setpoint, measurement=measurement)
-        u = max(0.0, min(1.0, u))
-        heater_power = u
-
-        # Update plant
-        measurement = system.update(heater_power, dt)
-
-        # Log
-        times.append(t)
-        temps.append(measurement)
-        powers.append(heater_power)
-
-        # Update plot data
-        temp_line.set_data(times, temps)
-        power_line.set_data(times, powers)
-
-        # Scroll window forward
-        ax1.set_xlim(max(0, t - 60), t + 1)
-        ax2.set_xlim(max(0, t - 60), t + 1)
-
-        return temp_line, power_line
-
-    anim = FuncAnimation(fig, update, frames=600, interval=100)
+    animation = FuncAnimation(fig, update, init_func=init, frames=range(1, len(trace.times)),
+                              interval=DT*1000, repeat=False)
     plt.show()
+    return animation
 
 
 if __name__ == "__main__":
