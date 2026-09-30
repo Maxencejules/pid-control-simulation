@@ -1,0 +1,21 @@
+name: Numerical checks and reproducible demo
+on: [push, pull_request]
+jobs:
+  simulation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest -q
+      - run: python demo.py --output-dir build/demo
+        env:
+          MPLBACKEND: Agg
+          MPLCONFIGDIR: ${{ runner.temp }}/matplotlib
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pid-simulation-results
+          path: build/demo
